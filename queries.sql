@@ -1,7 +1,6 @@
 /* SQL queries to test the relational database */
 
 /* TODO: add queries */
-<<<<<<< HEAD
 SELECT COUNT(*) FROM (
   SELECT UserID FROM Bidder UNION SELECT UserID FROM Seller
 ) Q1;
@@ -35,7 +34,3 @@ SELECT COUNT(*) AS "COUNT(DISTINCT CATEGORY)" FROM (
 	WHERE Amount > 100 AND b.ItemID = c.ItemID 
 	GROUP BY Category
 ) as Query6;
-=======
-SELECT COUNT(*)
-FROM Bidder, Seller
->>>>>>> 59ea69c202cd8bc3d0d89dc9d17978fb1b1aab35

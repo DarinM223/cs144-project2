@@ -6,7 +6,7 @@ CREATE TABLE Bidder (
   Location VARCHAR(80),
   Country VARCHAR(80),
 
-  PRIMARY KEY (UserID),
+  PRIMARY KEY (UserID)
 );
 
 CREATE TABLE Seller (

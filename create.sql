@@ -1,54 +1,56 @@
 /* SQL statements to create the tables necessary for the application */
 
 CREATE TABLE Bidder (
-  UserID VARCHAR(80),
-  Rating INTEGER,
-  Location VARCHAR(80),
-  Country VARCHAR(80),
+  UserID VARCHAR(80) NOT NULL,
+  Rating INTEGER NOT NULL,
+  Location VARCHAR(80) DEFAULT NULL,
+  Country VARCHAR(80) DEAFULT NULL,
 
   PRIMARY KEY (UserID)
 );
 
 CREATE TABLE Seller (
-  UserID VARCHAR(80),
-  Rating INTEGER,
+  UserID VARCHAR(80) NOT NULL,
+  Rating INTEGER NOT NULL,
 
   PRIMARY KEY (UserID)
 );
 
+CREATE TABLE Bid (
+  ItemID INTEGER NOT NULL,
+  UserID VARCHAR(80) NOT NULL,
+  Time TIMESTAMP NOT NULL,
+  Amount DECIMAL(8, 2) NOT NULL,
+
+  PRIMARY KEY (ItemID, UserID, Time),
+  FOREIGN KEY (ItemID) REFERENCES Item(ItemID),
+  FOREIGN KEY (UserID) REFERENCES Bidder(UserID)
+);
+
 CREATE TABLE Item (
-  ItemID INTEGER,
-  Name VARCHAR(80),
-  Buy_Price DECIMAL(10, 2),
-  First_Bid DECIMAL(10, 2),
-  Number_of_Bids INTEGER,
-  Location VARCHAR(80),
-  Latitude DECIMAL(9, 6),
-  Longitude DECIMAL(9, 6),
-  Currently DECIMAL(10, 2),
-  Country VARCHAR(80),
-  Started DATETIME,
-  Ends DATETIME,
-  Seller VARCHAR(80),
-  Description VARCHAR(4000),
+  ItemID INTEGER NOT NULL,
+  Name VARCHAR(80) NOT NULL,
+  Buy_Price DECIMAL(8, 2) DEFAULT NULL,
+  First_Bid DECIMAL(8, 2) NOT NULL,
+  Number_of_Bids INTEGER NOT NULL,
+  Location VARCHAR(80) NOT NULL,
+  Latitude DECIMAL(8, 6) DEFAULT NULL,
+  Longitude DECIMAL(8, 6) DEFAULT NULL,
+  Currently DECIMAL(8, 2) NOT NULL,
+  Country VARCHAR(80) NOT NULL,
+  Started TIMESTAMP NOT NULL,
+  Ends TIMESTAMP NOT NULL,
+  Seller INTEGER NOT NULL,
+  Description VARCHAR(4000) NOT NULL,
 
   PRIMARY KEY (ItemID),
   FOREIGN KEY Seller REFERENCES Seller(UserID)
 );
 
-CREATE TABLE Bid (
-  ItemID INTEGER,
-  UserID VARCHAR(80),
-  Time DATETIME,
-  Amount DECIMAL(10, 2),
-
-  FOREIGN KEY (ItemID) REFERENCES Item(ItemID),
-  FOREIGN KEY (UserID) REFERENCES Bidder(UserID)
-);
-
 CREATE TABLE ItemCategory (
-  ItemID INTEGER,
-  Category VARCHAR(80),
+  ItemID INTEGER NOT NULL,
+  Category VARCHAR(80) NOT NULL,
 
+  PRIMARY KEY (ItemID, Category),
   FOREIGN KEY (ItemID) REFERENCES Item(ItemID)
 );

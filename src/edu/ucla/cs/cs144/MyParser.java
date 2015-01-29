@@ -112,39 +112,39 @@ class MyParser {
 
     //class which represents entry in Item.csv
     public static class Item {
-        String id_itemID;
-        String id_name;
-        String id_currently;
-        String id_buy_price;
-        String id_first_bid;
-        String id_number_of_bids;
-        String id_location;
-        String id_latitude;
-        String id_longitude;
-        String id_country;
-        String id_started;
-        String id_ends;
-        String id_seller;
-        String id_description;
+        String i_itemID;
+        String i_name;
+        String i_currently;
+        String i_buy_price;
+        String i_first_bid;
+        String i_number_of_bids;
+        String i_location;
+        String i_latitude;
+        String i_longitude;
+        String i_country;
+        String i_started;
+        String i_ends;
+        String i_seller;
+        String i_description;
 
         public Item(String itemID, String name, String currently, String buy_price,
                             String first_bid, String number_of_bids, String location, String latitude,
                             String longitude, String country, String started, String ends
                             String seller, String description) {
-            id_itemID = itemID;
-            id_name = name;
-            id_currently = currently;
-            id_buy_price = buy_price;
-            id_first_bid = first_bid;
-            id_number_of_bids = number_of_bids;
-            id_location = location;
-            id_latitude = latitude;
-            id_longitude = longitude;
-            id_country = country;
-            id_started = started;
-            id_ends = ends;
-            id_seller = seller;
-            id_description = description;
+            i_itemID = itemID;
+            i_name = name;
+            i_currently = currently;
+            i_buy_price = buy_price;
+            i_first_bid = first_bid;
+            i_number_of_bids = number_of_bids;
+            i_location = location;
+            i_latitude = latitude;
+            i_longitude = longitude;
+            i_country = country;
+            i_started = started;
+            i_ends = ends;
+            i_seller = seller;
+            i_description = description;
         }
     }
 
@@ -408,5 +408,138 @@ class MyParser {
             File currentFile = new File(args[i]);
             processFile(currentFile);
         }
+
+        //write bidderMap to Bidder.csv
+        try {
+            FileWriter bidder_fw = new FileWriter("Bidder.csv");
+            BufferedWriter bidder_bw = new BufferedWriter(bidder_fw);
+
+            //iterate through bidderMap
+            for (Map.Entry<String, Bidder> e : bidderMap.entrySet()) {
+                //get bidder
+                Bidder bidder = e.getValue();
+
+                //construct record string
+                String output = bidder.b_userID + columnSeparator
+                                + bidder.b_rating + columnSeparator
+                                + bidder.b_location + columnSeparator
+                                + bidder.b_country + "\n";
+
+                //write record to file
+                bidder_bw.write(output);
+            }
+
+            bidder_bw.close();
+            bidder_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write sellerMap to Seller.csv
+        try {
+            FileWriter seller_fw = new FileWriter("Seller.csv");
+            BufferedWriter seller_bw = new BufferedWriter(seller_fw);
+
+            //iterate through sellerMap
+            for (Map.Entry<String, Seller> e : sellerMap.entrySet()) {
+                //get seller
+                Seller seller = e.getValue();
+
+                //construct record string
+                String output = seller.s_userID + columnSeparator
+                                + seller.s_rating + "\n";
+
+                //write record to file
+                seller_bw.write(output);
+            }
+
+            seller_bw.close();
+            seller_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write bidList to Bid.csv
+        try {
+            FileWriter bid_fw = new FileWriter("Bid.csv");
+            BufferedWriter bid_bw = new BufferedWriter(bid_fw);
+
+            //iterate through bidList
+            for (Bid bid : bidList) {
+                //construct record string
+                String output = bid.bd_itemID + columnSeparator
+                                + bid.bd_userID + columnSeparator
+                                + bid.bd_time + columnSeparator
+                                + bid.bd_amount + "\n";
+
+                //write record to file
+                bid_bw.write(output);
+            }
+
+            bid_bw.close();
+            bid_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write itemList to Item.csv
+        try {
+            FileWriter item_fw = new FileWriter("Item.csv");
+            BufferedWriter item_bw = new BufferedWriter(item_fw);            
+
+            //iterate through itemList
+            for (Item item : itemList) {
+                //construct record string
+                String output = item.i_itemID + columnSeparator
+                                + item.i_name + columnSeparator
+                                + item.i_currently + columnSeparator
+                                + item.i_buy_price + columnSeparator
+                                + item.i_first_bid + columnSeparator
+                                + item.i_number_of_bids + columnSeparator
+                                + item.i_location + columnSeparator
+                                + item.i_latitude + columnSeparator
+                                + item.i_longitude + columnSeparator
+                                + item.i_country + columnSeparator
+                                + item.i_started + columnSeparator
+                                + item.i_ends + columnSeparator
+                                + item.i_seller + columnSeparator
+                                + item.i_description + "\n";
+
+                //write record to file
+                item_bw.write(output);
+            }
+
+            item_bw.close();
+            item_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write itemCategoryList to ItemCategory.csv
+        try {
+            FileWriter itemCategory_fw = new FileWriter("ItemCategory.csv");
+            BufferedWriter itemCategory_bw = new BufferedWriter(itemCategory_fw);    
+
+            //iterate through itemCategoryList
+            for (ItemCategory itemCategory : itemCategoryList) {
+                //construct record string
+                String output = itemCategory.ic_itemID + columnSeparator
+                                + itemCategory.ic_category + "\n";
+
+                //write record to file
+                itemCategory_bw.write(output);
+            }
+
+            itemCategory_bw.close();
+            itemCategory_fw.close();
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }        
     }
 }

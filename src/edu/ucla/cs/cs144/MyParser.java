@@ -255,6 +255,11 @@ class MyParser {
         }
     }
 
+    //escapes characters that need escaping
+    static String escapeString(String s) {
+        return s.replaceAll("\"", "\\\"");
+    }
+
     //converts xml date format to sql date format
     static String convertDateFormat(String date) {
         try {
@@ -300,7 +305,7 @@ class MyParser {
         for (Element e : items) {
             //get item info for e
             String itemID = e.getAttribute("ItemID");
-            String name = getElementTextByTagNameNR(e, "Name");
+            String name = escapeString(getElementTextByTagNameNR(e, "Name"));
             
             //convert currently, buy_price, first_bid to money-string
             String currently = strip(getElementTextByTagNameNR(e, "Currently"));
@@ -309,10 +314,10 @@ class MyParser {
 
             String number_of_bids = getElementTextByTagNameNR(e, "Number_of_Bids"); 
             Element location_e = getElementByTagNameNR(e, "Location");
-            String location = getElementText(location_e);
+            String location = escapeString(getElementText(location_e));
             String latitude = location_e.getAttribute("Latitude");
             String longitude = location_e.getAttribute("Longitude");
-            String country = getElementTextByTagNameNR(e, "Country");
+            String country = escapeString(getElementTextByTagNameNR(e, "Country"));
 
             //convert started and ends
             String started = convertDateFormat(getElementTextByTagNameNR(e, "Started"));
@@ -330,7 +335,7 @@ class MyParser {
             }
 
             //truncate description to 4000 characters if its longer than 4000
-            String description = getElementTextByTagNameNR(e, "Description");
+            String description = escapeString(getElementTextByTagNameNR(e, "Description"));
             if (description.length() > 4000) {
                 description = description.substring(0, 4000);
             }
@@ -343,8 +348,8 @@ class MyParser {
                 Element bidder = getElementByTagNameNR(b, "Bidder");
                 String b_userID = bidder.getAttribute("UserID");
                 String b_rating = bidder.getAttribute("Rating");
-                String b_location = getElementTextByTagNameNR(bidder, "Location");
-                String b_country = getElementTextByTagNameNR(bidder, "Country");
+                String b_location = escapeString(getElementTextByTagNameNR(bidder, "Location"));
+                String b_country = escapeString(getElementTextByTagNameNR(bidder, "Country"));
 
                 //check if bidder is already in bidderMap and add bidder if not
                 if (!bidderMap.containsKey(b_userID)) {

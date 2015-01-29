@@ -22,8 +22,8 @@ LOAD DATA LOCAL INFILE 'Item.dat'
 INTO TABLE Item
 FIELDS TERMINATED BY '|*|'
 LINES TERMINATED BY "\n"
-(ItemID, Name, @buy_price, First_Bid, Number_Of_Bids, Location, @latitude,
-@longitude, Currently, Country, @started, @ends, Seller, Description)
+(ItemID, Name, Currently, @buy_price, First_Bid, Number_Of_Bids, Location, @latitude,
+@longitude, Country, @started, @ends, Seller, Description)
 SET Buy_Price = nullif(@buy_price, ''),
 	Latitude = nullif(@latitude, ''),
 	Longitude = nullif(@longitude, ''),

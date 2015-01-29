@@ -63,11 +63,11 @@ class MyParser {
     };
 
     //hashmaps and arraylist to store
-    Map<String, Bidder> bidderMap = new HashMap<String, Bidder>();
-    Map<String, Seller> sellerMap = new HashMap<String, Seller>();
-    ArrayList<Bid> bidList = new ArrayList<Bid>();
-    ArrayList<Item> itemList = new ArrayList<Item>();
-    ArrayList<ItemCategory> itemCategoryList = new ArrayList<ItemCategory>();
+    static Map<String, Bidder> bidderMap = new HashMap<String, Bidder>();
+    static Map<String, Seller> sellerMap = new HashMap<String, Seller>();
+    static ArrayList<Bid> bidList = new ArrayList<Bid>();
+    static ArrayList<Item> itemList = new ArrayList<Item>();
+    static ArrayList<ItemCategory> itemCategoryList = new ArrayList<ItemCategory>();
 
     //class which represents entry in Bidder.csv
     public static class Bidder {
@@ -76,7 +76,7 @@ class MyParser {
         String b_location;
         String b_country;
 
-        public Bidder(String userID, String rating, string location, string country) {
+        public Bidder(String userID, String rating, String location, String country) {
             b_userID = userID;
             b_rating = rating;
             b_location = location;
@@ -129,7 +129,7 @@ class MyParser {
 
         public Item(String itemID, String name, String currently, String buy_price,
                             String first_bid, String number_of_bids, String location, String latitude,
-                            String longitude, String country, String started, String ends
+                            String longitude, String country, String started, String ends,
                             String seller, String description) {
             i_itemID = itemID;
             i_name = name;
@@ -308,7 +308,7 @@ class MyParser {
             String first_bid = strip(getElementTextByTagNameNR(e, "First_Bid"));
 
             String number_of_bids = getElementTextByTagNameNR(e, "Number_of_Bids"); 
-            Element location_e = getElementByTagName(e, "Location");
+            Element location_e = getElementByTagNameNR(e, "Location");
             String location = getElementText(location_e);
             String latitude = location_e.getAttribute("Latitude");
             String longitude = location_e.getAttribute("Longitude");
@@ -320,8 +320,8 @@ class MyParser {
 
             //get seller userID and rating
             Element seller = getElementByTagNameNR(e, "Seller");
-            s_userID = seller.getAttribute("UserID");
-            s_rating = seller.getAttribute("Rating");
+            String s_userID = seller.getAttribute("UserID");
+            String s_rating = seller.getAttribute("Rating");
 
             //check if seller is already in sellerMap and add seller if not
             if (!sellerMap.containsKey(s_userID)) {
@@ -362,7 +362,7 @@ class MyParser {
             }
 
             //get all categories and put into itemCategoryList
-            Element[] categories = getElementsByTagNameNR("Category");
+            Element[] categories = getElementsByTagNameNR(e, "Category");
             for (Element c : categories) {
                 //get category
                 String category = getElementText(c);

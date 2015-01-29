@@ -61,7 +61,104 @@ class MyParser {
 	"DocFragment",
 	"Notation",
     };
-    
+
+    //hashmaps and arraylist to store
+    static Map<String, Bidder> bidderMap = new HashMap<String, Bidder>();
+    static Map<String, Seller> sellerMap = new HashMap<String, Seller>();
+    static ArrayList<Bid> bidList = new ArrayList<Bid>();
+    static ArrayList<Item> itemList = new ArrayList<Item>();
+    static ArrayList<ItemCategory> itemCategoryList = new ArrayList<ItemCategory>();
+
+    //class which represents entry in Bidder.dat
+    public static class Bidder {
+        String b_userID;
+        String b_rating;
+        String b_location;
+        String b_country;
+
+        public Bidder(String userID, String rating, String location, String country) {
+            b_userID = userID;
+            b_rating = rating;
+            b_location = location;
+            b_country = country;
+        }
+    }
+
+    //class which represents entry in Seller.dat
+    public static class Seller {
+        String s_userID;
+        String s_rating;
+
+        public Seller(String userID, String rating) {
+            s_userID = userID;
+            s_rating = rating;
+        }
+    }
+
+    //class which represents entry in Bid.dat
+    public static class Bid {
+        String bd_itemID;
+        String bd_userID;
+        String bd_time;
+        String bd_amount;
+
+        public Bid(String itemID, String userID, String time, String amount) {
+            bd_itemID = itemID;
+            bd_userID = userID;
+            bd_time = time;
+            bd_amount = amount;
+        }
+    }
+
+    //class which represents entry in Item.dat
+    public static class Item {
+        String i_itemID;
+        String i_name;
+        String i_currently;
+        String i_buy_price;
+        String i_first_bid;
+        String i_number_of_bids;
+        String i_location;
+        String i_latitude;
+        String i_longitude;
+        String i_country;
+        String i_started;
+        String i_ends;
+        String i_seller;
+        String i_description;
+
+        public Item(String itemID, String name, String currently, String buy_price,
+                            String first_bid, String number_of_bids, String location, String latitude,
+                            String longitude, String country, String started, String ends,
+                            String seller, String description) {
+            i_itemID = itemID;
+            i_name = name;
+            i_currently = currently;
+            i_buy_price = buy_price;
+            i_first_bid = first_bid;
+            i_number_of_bids = number_of_bids;
+            i_location = location;
+            i_latitude = latitude;
+            i_longitude = longitude;
+            i_country = country;
+            i_started = started;
+            i_ends = ends;
+            i_seller = seller;
+            i_description = description;
+        }
+    }
+
+    //class which represents entry in ItemCategory.dat
+    public static class ItemCategory {
+        String ic_itemID;
+        String ic_category;
+
+        public ItemCategory(String itemID, String category) {
+            ic_itemID = itemID;
+            ic_category = category;
+        }
+    }
+
     static class MyErrorHandler implements ErrorHandler {
         
         public void warning(SAXParseException exception)
@@ -157,6 +254,26 @@ class MyParser {
             return nf.format(am).substring(1);
         }
     }
+
+    //escapes characters that need escaping
+    static String escapeString(String s) {
+        return s.replaceAll("\"", "\\\"");
+    }
+
+    //converts xml date format to sql date format
+    static String convertDateFormat(String date) {
+        try {
+                SimpleDateFormat old_format = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+                SimpleDateFormat new_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                date = new_format.format(old_format.parse(date));
+        }
+        catch(ParseException e) {
+            System.out.println("Parse error!");
+        }
+        
+        return date;
+    }
     
     /* Process one items-???.xml file.
      */
@@ -180,13 +297,92 @@ class MyParser {
          * file. Use doc.getDocumentElement() to get the root Element. */
         System.out.println("Successfully parsed - " + xmlFile);
         
-        /* Fill in code here (you will probably need to write auxiliary
-            methods). */
-        
-        
-        
-        /**************************************************************/
-        
+        //put all items of the file into an array
+        Element root = doc.getDocumentElement();
+        Element[] items = getElementsByTagNameNR(root, "Item");
+
+        //iterate through all items and put into respective structures
+        for (Element e : items) {
+            //get item info for e
+            String itemID = e.getAttribute("ItemID");
+            String name = escapeString(getElementTextByTagNameNR(e, "Name"));
+            
+            //convert currently, buy_price, first_bid to money-string
+            String currently = strip(getElementTextByTagNameNR(e, "Currently"));
+            String buy_price = strip(getElementTextByTagNameNR(e, "Buy_Price"));
+            String first_bid = strip(getElementTextByTagNameNR(e, "First_Bid"));
+
+            String number_of_bids = getElementTextByTagNameNR(e, "Number_of_Bids"); 
+            Element location_e = getElementByTagNameNR(e, "Location");
+            String location = escapeString(getElementText(location_e));
+            String latitude = location_e.getAttribute("Latitude");
+            String longitude = location_e.getAttribute("Longitude");
+            String country = escapeString(getElementTextByTagNameNR(e, "Country"));
+
+            //convert started and ends
+            String started = convertDateFormat(getElementTextByTagNameNR(e, "Started"));
+            String ends = convertDateFormat(getElementTextByTagNameNR(e, "Ends"));
+
+            //get seller userID and rating
+            Element seller = getElementByTagNameNR(e, "Seller");
+            String s_userID = seller.getAttribute("UserID");
+            String s_rating = seller.getAttribute("Rating");
+
+            //check if seller is already in sellerMap and add seller if not
+            if (!sellerMap.containsKey(s_userID)) {
+                Seller s = new Seller(s_userID, s_rating);
+                sellerMap.put(s_userID, s);
+            }
+
+            //truncate description to 4000 characters if its longer than 4000
+            String description = escapeString(getElementTextByTagNameNR(e, "Description"));
+            if (description.length() > 4000) {
+                description = description.substring(0, 4000);
+            }
+
+            //get bids for the item if any
+            Element bids_root = getElementByTagNameNR(e, "Bids");
+            Element[] bids = getElementsByTagNameNR(bids_root, "Bid");
+            for (Element b : bids) {
+                //get bidder info
+                Element bidder = getElementByTagNameNR(b, "Bidder");
+                String b_userID = bidder.getAttribute("UserID");
+                String b_rating = bidder.getAttribute("Rating");
+                String b_location = escapeString(getElementTextByTagNameNR(bidder, "Location"));
+                String b_country = escapeString(getElementTextByTagNameNR(bidder, "Country"));
+
+                //check if bidder is already in bidderMap and add bidder if not
+                if (!bidderMap.containsKey(b_userID)) {
+                    Bidder b_bidder = new Bidder(b_userID, b_rating, b_location, b_country);
+                    bidderMap.put(b_userID, b_bidder);
+                }
+
+                //get remaining bid info
+                String time = convertDateFormat(getElementTextByTagNameNR(b, "Time"));
+                String amount = strip(getElementTextByTagNameNR(b, "Amount"));
+
+                //add bid to bidList
+                Bid bid = new Bid(itemID, b_userID, time, amount);
+                bidList.add(bid);
+            }
+
+            //get all categories and put into itemCategoryList
+            Element[] categories = getElementsByTagNameNR(e, "Category");
+            for (Element c : categories) {
+                //get category
+                String category = getElementText(c);
+
+                //create ItemCategory object and add to itemCategoryList
+                ItemCategory ic = new ItemCategory(itemID, category);
+                itemCategoryList.add(ic);
+            }
+
+            //add item to itemList
+            Item i = new Item(itemID, name, currently, buy_price, first_bid,
+                            number_of_bids, location, latitude, longitude,
+                            country, started, ends, s_userID, description);
+            itemList.add(i);
+        }
     }
     
     public static void main (String[] args) {
@@ -217,5 +413,138 @@ class MyParser {
             File currentFile = new File(args[i]);
             processFile(currentFile);
         }
+
+        //write bidderMap to Bidder.dat
+        try {
+            FileWriter bidder_fw = new FileWriter("Bidder.dat");
+            BufferedWriter bidder_bw = new BufferedWriter(bidder_fw);
+
+            //iterate through bidderMap
+            for (Map.Entry<String, Bidder> e : bidderMap.entrySet()) {
+                //get bidder
+                Bidder bidder = e.getValue();
+
+                //construct record string
+                String output = bidder.b_userID + columnSeparator
+                                + bidder.b_rating + columnSeparator
+                                + bidder.b_location + columnSeparator
+                                + bidder.b_country + "\n";
+
+                //write record to file
+                bidder_bw.write(output);
+            }
+
+            bidder_bw.close();
+            bidder_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write sellerMap to Seller.dat
+        try {
+            FileWriter seller_fw = new FileWriter("Seller.dat");
+            BufferedWriter seller_bw = new BufferedWriter(seller_fw);
+
+            //iterate through sellerMap
+            for (Map.Entry<String, Seller> e : sellerMap.entrySet()) {
+                //get seller
+                Seller seller = e.getValue();
+
+                //construct record string
+                String output = seller.s_userID + columnSeparator
+                                + seller.s_rating + "\n";
+
+                //write record to file
+                seller_bw.write(output);
+            }
+
+            seller_bw.close();
+            seller_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write bidList to Bid.dat
+        try {
+            FileWriter bid_fw = new FileWriter("Bid.dat");
+            BufferedWriter bid_bw = new BufferedWriter(bid_fw);
+
+            //iterate through bidList
+            for (Bid bid : bidList) {
+                //construct record string
+                String output = bid.bd_itemID + columnSeparator
+                                + bid.bd_userID + columnSeparator
+                                + bid.bd_time + columnSeparator
+                                + bid.bd_amount + "\n";
+
+                //write record to file
+                bid_bw.write(output);
+            }
+
+            bid_bw.close();
+            bid_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write itemList to Item.dat
+        try {
+            FileWriter item_fw = new FileWriter("Item.dat");
+            BufferedWriter item_bw = new BufferedWriter(item_fw);            
+
+            //iterate through itemList
+            for (Item item : itemList) {
+                //construct record string
+                String output = item.i_itemID + columnSeparator
+                                + item.i_name + columnSeparator
+                                + item.i_currently + columnSeparator
+                                + item.i_buy_price + columnSeparator
+                                + item.i_first_bid + columnSeparator
+                                + item.i_number_of_bids + columnSeparator
+                                + item.i_location + columnSeparator
+                                + item.i_latitude + columnSeparator
+                                + item.i_longitude + columnSeparator
+                                + item.i_country + columnSeparator
+                                + item.i_started + columnSeparator
+                                + item.i_ends + columnSeparator
+                                + item.i_seller + columnSeparator
+                                + item.i_description + "\n";
+
+                //write record to file
+                item_bw.write(output);
+            }
+
+            item_bw.close();
+            item_fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //write itemCategoryList to ItemCategory.dat
+        try {
+            FileWriter itemCategory_fw = new FileWriter("ItemCategory.dat");
+            BufferedWriter itemCategory_bw = new BufferedWriter(itemCategory_fw);    
+
+            //iterate through itemCategoryList
+            for (ItemCategory itemCategory : itemCategoryList) {
+                //construct record string
+                String output = itemCategory.ic_itemID + columnSeparator
+                                + itemCategory.ic_category + "\n";
+
+                //write record to file
+                itemCategory_bw.write(output);
+            }
+
+            itemCategory_bw.close();
+            itemCategory_fw.close();
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }        
     }
 }

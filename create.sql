@@ -16,7 +16,7 @@ CREATE TABLE Seller (
   PRIMARY KEY (UserID)
 );
 
-CREATE TABLE ItemDescription (
+CREATE TABLE Item (
   ItemID INTEGER,
   Name VARCHAR(80),
   Buy_Price DECIMAL(10, 2),
@@ -42,7 +42,7 @@ CREATE TABLE Bid (
   Time DATETIME,
   Amount DECIMAL(10, 2),
 
-  FOREIGN KEY (ItemID) REFERENCES ItemDescription(ItemID),
+  FOREIGN KEY (ItemID) REFERENCES Item(ItemID),
   FOREIGN KEY (UserID) REFERENCES Bidder(UserID)
 );
 
@@ -50,5 +50,5 @@ CREATE TABLE ItemCategory (
   ItemID INTEGER,
   Category VARCHAR(80),
 
-  FOREIGN KEY (ItemID) REFERENCES ItemDescription(ItemID)
+  FOREIGN KEY (ItemID) REFERENCES Item(ItemID)
 );

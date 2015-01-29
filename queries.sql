@@ -12,7 +12,7 @@ FROM (
 
 SELECT COUNT(*)
 FROM Item i
-WHERE i.Location = 'New York';
+WHERE BINARY i.Location = 'New York';
 
 SELECT COUNT(*)
 FROM (

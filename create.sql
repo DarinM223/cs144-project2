@@ -22,9 +22,7 @@ CREATE TABLE Bid (
   Time TIMESTAMP NOT NULL,
   Amount DECIMAL(8, 2) NOT NULL,
 
-  PRIMARY KEY (ItemID, UserID, Time),
-  FOREIGN KEY (ItemID) REFERENCES Item(ItemID),
-  FOREIGN KEY (UserID) REFERENCES Bidder(UserID)
+  PRIMARY KEY (ItemID, UserID, Time)
 );
 
 CREATE TABLE Item (
@@ -44,7 +42,7 @@ CREATE TABLE Item (
   Description VARCHAR(4000) NOT NULL,
 
   PRIMARY KEY (ItemID),
-  FOREIGN KEY Seller REFERENCES Seller(UserID)
+  FOREIGN KEY (Seller) REFERENCES Seller(UserID)
 );
 
 CREATE TABLE ItemCategory (

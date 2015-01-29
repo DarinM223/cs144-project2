@@ -36,7 +36,7 @@ CREATE TABLE ItemDescription (
   FOREIGN KEY Seller REFERENCES Seller(UserID)
 );
 
-CREATE TABLE Bids (
+CREATE TABLE Bid (
   ItemID INTEGER,
   UserID VARCHAR(80),
   Time DATETIME,

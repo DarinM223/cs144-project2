@@ -20,4 +20,8 @@ ant run-all
 mysql CS144 < load.sql
 
 # remove all temporary files
-# TODO: remove all temporary files
+rm Bid.dat
+rm Bidder.dat
+rm Item.dat
+rm ItemCategory.dat
+rm Seller.dat

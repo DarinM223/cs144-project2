@@ -1,6 +1,5 @@
 /* SQL queries to test the relational database */
 
-/* TODO: add queries */
 SELECT COUNT(*)
 FROM (
 	SELECT UserID
@@ -32,14 +31,14 @@ FROM (
 	SELECT UserID
 	FROM Seller
 	WHERE Rating > 1000
-) as Query5;
+) as Q4;
 
 SELECT COUNT(*)
 FROM (
 	SELECT b.UserID
 	FROM Bidder b, Seller s
 	WHERE b.UserID = s.UserID
-) as Query6;
+) as Q5;
 
 SELECT COUNT(*) AS "COUNT(DISTINCT CATEGORY)"
 FROM (
@@ -47,4 +46,4 @@ FROM (
 	FROM Bid b, ItemCategory c 
 	WHERE Amount > 100 AND b.ItemID = c.ItemID 
 	GROUP BY Category
-) as Query7;
+) as Q6;

@@ -69,7 +69,7 @@ class MyParser {
     static ArrayList<Item> itemList = new ArrayList<Item>();
     static ArrayList<ItemCategory> itemCategoryList = new ArrayList<ItemCategory>();
 
-    //class which represents entry in Bidder.csv
+    //class which represents entry in Bidder.dat
     public static class Bidder {
         String b_userID;
         String b_rating;
@@ -84,7 +84,7 @@ class MyParser {
         }
     }
 
-    //class which represents entry in Seller.csv
+    //class which represents entry in Seller.dat
     public static class Seller {
         String s_userID;
         String s_rating;
@@ -95,7 +95,7 @@ class MyParser {
         }
     }
 
-    //class which represents entry in Bid.csv
+    //class which represents entry in Bid.dat
     public static class Bid {
         String bd_itemID;
         String bd_userID;
@@ -110,7 +110,7 @@ class MyParser {
         }
     }
 
-    //class which represents entry in Item.csv
+    //class which represents entry in Item.dat
     public static class Item {
         String i_itemID;
         String i_name;
@@ -148,7 +148,7 @@ class MyParser {
         }
     }
 
-    //class which represents entry in ItemCategory.csv
+    //class which represents entry in ItemCategory.dat
     public static class ItemCategory {
         String ic_itemID;
         String ic_category;
@@ -409,9 +409,9 @@ class MyParser {
             processFile(currentFile);
         }
 
-        //write bidderMap to Bidder.csv
+        //write bidderMap to Bidder.dat
         try {
-            FileWriter bidder_fw = new FileWriter("Bidder.csv");
+            FileWriter bidder_fw = new FileWriter("Bidder.dat");
             BufferedWriter bidder_bw = new BufferedWriter(bidder_fw);
 
             //iterate through bidderMap
@@ -436,9 +436,9 @@ class MyParser {
             e.printStackTrace();
         }
 
-        //write sellerMap to Seller.csv
+        //write sellerMap to Seller.dat
         try {
-            FileWriter seller_fw = new FileWriter("Seller.csv");
+            FileWriter seller_fw = new FileWriter("Seller.dat");
             BufferedWriter seller_bw = new BufferedWriter(seller_fw);
 
             //iterate through sellerMap
@@ -461,9 +461,9 @@ class MyParser {
             e.printStackTrace();
         }
 
-        //write bidList to Bid.csv
+        //write bidList to Bid.dat
         try {
-            FileWriter bid_fw = new FileWriter("Bid.csv");
+            FileWriter bid_fw = new FileWriter("Bid.dat");
             BufferedWriter bid_bw = new BufferedWriter(bid_fw);
 
             //iterate through bidList
@@ -485,9 +485,9 @@ class MyParser {
             e.printStackTrace();
         }
 
-        //write itemList to Item.csv
+        //write itemList to Item.dat
         try {
-            FileWriter item_fw = new FileWriter("Item.csv");
+            FileWriter item_fw = new FileWriter("Item.dat");
             BufferedWriter item_bw = new BufferedWriter(item_fw);            
 
             //iterate through itemList
@@ -519,9 +519,9 @@ class MyParser {
             e.printStackTrace();
         }
 
-        //write itemCategoryList to ItemCategory.csv
+        //write itemCategoryList to ItemCategory.dat
         try {
-            FileWriter itemCategory_fw = new FileWriter("ItemCategory.csv");
+            FileWriter itemCategory_fw = new FileWriter("ItemCategory.dat");
             BufferedWriter itemCategory_bw = new BufferedWriter(itemCategory_fw);    
 
             //iterate through itemCategoryList

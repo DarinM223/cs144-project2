@@ -15,7 +15,7 @@ Seller(UserID [KEY], Rating)
 
 Bids(ItemID [KEY], UserID [KEY], Time [KEY], Amount)
 
-ItemDescription(ItemID [KEY], Name, Currently, Buy_Price, First_Bid, Number_of_Bids, Location, Latitude, Longitude, Country, Started, Ends, Seller [FOREIGN KEY], Description)
+Item(ItemID [KEY], Name, Currently, Buy_Price, First_Bid, Number_of_Bids, Location, Latitude, Longitude, Country, Started, Ends, Seller [FOREIGN KEY], Description)
 
 ItemCategory(ItemID [KEY, FOREIGN KEY], Category [KEY])
 
